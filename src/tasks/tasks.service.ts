@@ -9,7 +9,7 @@ export class TasksService {
   private lastId = 1;
   private tasks: TaskEntity[] = [
     {
-      id: 1,
+      id: '1',
       title: 'Task 1',
       isCompleted: false,
       createdAt: new Date(),
@@ -20,7 +20,7 @@ export class TasksService {
   create(createTaskDto: CreateTaskDto) {
     this.lastId++;
 
-    const id = this.lastId;
+    const id = this.lastId.toString();
     const newTask = {
       id,
       title: createTaskDto.title,
@@ -38,7 +38,7 @@ export class TasksService {
     return this.tasks;
   }
 
-  readOne(id: number) {
+  readOne(id: string) {
     const task = this.tasks.find(task => task.id === id);
 
     if (!task) {
@@ -48,7 +48,7 @@ export class TasksService {
     return task;
   }
 
-  update(id: number, UpdateTaskDto: UpdateTaskDto) {
+  update(id: string, UpdateTaskDto: UpdateTaskDto) {
     const taskIndex = this.tasks.findIndex(task => task.id === id);
 
     if (taskIndex < 0) {
@@ -62,7 +62,7 @@ export class TasksService {
     return this.tasks[taskIndex];
   }
 
-  delete(id: number) {
+  delete(id: string) {
     const taskIndex = this.tasks.findIndex(task => task.id === id);
 
     if (taskIndex < 0) {
