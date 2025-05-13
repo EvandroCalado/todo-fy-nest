@@ -1,7 +1,26 @@
 @baseUrl = http://localhost:3000
 
-### Find All
+### Create
+POST {{baseUrl}}/task/
+Content-Type: application/json
+
+{
+  "task": "task example"
+}
+
+### Read All
 GET {{baseUrl}}/task/
 
-### Find One
+### Read One
 GET {{baseUrl}}/task/1
+
+### Update
+PATCH  {{baseUrl}}/task/1
+Content-Type: application/json
+
+{
+  "task": "task edited"
+}
+
+### Delete
+DELETE   {{baseUrl}}/task/1
