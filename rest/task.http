@@ -5,12 +5,8 @@ POST {{baseUrl}}/tasks
 Content-Type: application/json
 
 {
-  "title": "Task 1",
-  "isCompleted": false,
-  "createdAt": "2025-05-13T02:48:44.120Z",
-  "updatedAt": "2025-05-13T02:48:44.120Z"
+  "title": "Task 1"
 }
-
 
 ### Read All
 GET {{baseUrl}}/tasks
@@ -30,4 +26,4 @@ Content-Type: application/json
 }
 
 ### Delete
-DELETE   {{baseUrl}}/tasks/1
+DELETE   {{baseUrl}}/tasks/3

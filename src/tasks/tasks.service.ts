@@ -23,9 +23,10 @@ export class TasksService {
     const id = this.lastId;
     const newTask = {
       id,
+      title: createTaskDto.title,
+      isCompleted: false,
       createdAt: new Date(),
       updatedAt: new Date(),
-      ...createTaskDto,
     };
 
     this.tasks.push(newTask);
@@ -37,8 +38,8 @@ export class TasksService {
     return this.tasks;
   }
 
-  readOne(id: string) {
-    const task = this.tasks.find(task => task.id === Number(id));
+  readOne(id: number) {
+    const task = this.tasks.find(task => task.id === id);
 
     if (!task) {
       throw new NotFoundException('Task not found');
@@ -47,8 +48,8 @@ export class TasksService {
     return task;
   }
 
-  update(id: string, UpdateTaskDto: UpdateTaskDto) {
-    const taskIndex = this.tasks.findIndex(task => task.id === Number(id));
+  update(id: number, UpdateTaskDto: UpdateTaskDto) {
+    const taskIndex = this.tasks.findIndex(task => task.id === id);
 
     if (taskIndex < 0) {
       throw new NotFoundException('Task not found');
@@ -61,8 +62,8 @@ export class TasksService {
     return this.tasks[taskIndex];
   }
 
-  delete(id: string) {
-    const taskIndex = this.tasks.findIndex(task => task.id === Number(id));
+  delete(id: number) {
+    const taskIndex = this.tasks.findIndex(task => task.id === id);
 
     if (taskIndex < 0) {
       throw new NotFoundException('Task not found');

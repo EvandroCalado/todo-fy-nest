@@ -6,7 +6,7 @@ export class TaskEntity {
   title: string;
 
   // @Column({ default: false })
-  isCompleted: boolean;
+  isCompleted?: boolean;
 
   // @ManyToOne(() => User, (user) => user.tasks, { onDelete: 'CASCADE' })
   // user: User;
