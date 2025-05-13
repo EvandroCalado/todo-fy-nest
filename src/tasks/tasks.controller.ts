@@ -9,16 +9,16 @@ import {
   Query,
 } from '@nestjs/common';
 
-import { TaskService } from './task.service';
+import { TasksService } from './tasks.service';
 
-@Controller('task')
-export class TaskController {
-  constructor(private readonly taskService: TaskService) {}
+@Controller('tasks')
+export class TasksController {
+  constructor(private readonly tasksService: TasksService) {}
 
   @Post()
   create(@Body() body: Record<string, any>) {
     console.log(body);
-    return this.taskService.create();
+    return this.tasksService.create();
   }
 
   @Get()

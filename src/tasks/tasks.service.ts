@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
-export class TaskService {
+export class TasksService {
   create() {
     return 'This action adds a new task';
   }

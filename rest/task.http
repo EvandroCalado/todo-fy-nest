@@ -1,7 +1,7 @@
 @baseUrl = http://localhost:3000
 
 ### Create
-POST {{baseUrl}}/task
+POST {{baseUrl}}/tasks
 Content-Type: application/json
 
 {
@@ -9,15 +9,15 @@ Content-Type: application/json
 }
 
 ### Read All
-GET {{baseUrl}}/task
+GET {{baseUrl}}/tasks
 ?limit=10
 &offset=0
 
 ### Read One
-GET {{baseUrl}}/task/1
+GET {{baseUrl}}/tasks/1
 
 ### Update
-PATCH  {{baseUrl}}/task/1
+PATCH  {{baseUrl}}/tasks/1
 Content-Type: application/json
 
 {
@@ -25,4 +25,4 @@ Content-Type: application/json
 }
 
 ### Delete
-DELETE   {{baseUrl}}/task/1
+DELETE   {{baseUrl}}/tasks/1
