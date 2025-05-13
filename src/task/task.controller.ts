@@ -6,18 +6,21 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 
 @Controller('task')
 export class TaskController {
   @Post()
-  create(@Body() body: unknown) {
+  create(@Body() body: Record<string, any>) {
     return body;
   }
 
   @Get()
-  readAll() {
-    return 'This action returns all task';
+  readAll(@Query() pagination: Record<string, any>) {
+    const { limit = 10, offset = 0 } = pagination;
+
+    return `This action returns all task (limit: ${limit}, offset: ${offset})`;
   }
 
   @Get(':id')

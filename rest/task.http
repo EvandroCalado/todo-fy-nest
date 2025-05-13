@@ -1,7 +1,7 @@
 @baseUrl = http://localhost:3000
 
 ### Create
-POST {{baseUrl}}/task/
+POST {{baseUrl}}/task
 Content-Type: application/json
 
 {
@@ -9,7 +9,9 @@ Content-Type: application/json
 }
 
 ### Read All
-GET {{baseUrl}}/task/
+GET {{baseUrl}}/task
+?limit=10
+&offset=0
 
 ### Read One
 GET {{baseUrl}}/task/1
