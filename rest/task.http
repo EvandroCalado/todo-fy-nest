@@ -5,7 +5,7 @@ POST {{baseUrl}}/tasks
 Content-Type: application/json
 
 {
-  "title": "Task 1"
+  "title": "Nova task"
 }
 
 ### Read All
@@ -14,16 +14,16 @@ GET {{baseUrl}}/tasks
 &offset=0
 
 ### Read One
-GET {{baseUrl}}/tasks/3
+GET {{baseUrl}}/tasks/63642e6b-a94b-4d8e-a221-7b9283299034
 
 ### Update
-PATCH  {{baseUrl}}/tasks/3
+PATCH  {{baseUrl}}/tasks/5c0e6599-25bb-4db7-acdd-035907f39282
 Content-Type: application/json
 
 {
-  "title": "Task edited",
+  "title": "Teste de task editado",
   "isCompleted": true
 }
 
 ### Delete
-DELETE   {{baseUrl}}/tasks/3
+DELETE   {{baseUrl}}/tasks/63642e6b-a94b-4d8e-a221-7b9283299034

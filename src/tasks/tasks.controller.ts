@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseUUIDPipe,
   Patch,
   Post,
   Query,
@@ -31,17 +32,20 @@ export class TasksController {
   }
 
   @Get(':id')
-  readOne(@Param('id') id: string) {
+  readOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.tasksService.readOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() UpdateTaskDto: UpdateTaskDto) {
-    return this.tasksService.update(id, UpdateTaskDto);
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateTaskDto: UpdateTaskDto,
+  ) {
+    return this.tasksService.update(id, updateTaskDto);
   }
 
   @Delete(':id')
-  delete(@Param('id') id: string) {
+  delete(@Param('id', ParseUUIDPipe) id: string) {
     return this.tasksService.delete(id);
   }
 }
