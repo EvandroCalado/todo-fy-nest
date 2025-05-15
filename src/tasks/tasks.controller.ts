@@ -10,6 +10,8 @@ import {
   Query,
 } from '@nestjs/common';
 
+import { PaginationDto } from '@/common/dto/pagination.dto';
+
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { TasksService } from './tasks.service';
@@ -24,16 +26,13 @@ export class TasksController {
   }
 
   @Get()
-  readAll(@Query() pagination: Record<string, any>) {
-    const { limit = 10, offset = 0 } = pagination;
-    console.log(limit, offset);
-
-    return this.tasksService.readAll();
+  findAll(@Query() paginationDto: PaginationDto) {
+    return this.tasksService.findAll(paginationDto);
   }
 
   @Get(':id')
-  readOne(@Param('id', ParseUUIDPipe) id: string) {
-    return this.tasksService.readOne(id);
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
+    return this.tasksService.findOne(id);
   }
 
   @Patch(':id')
@@ -45,7 +44,7 @@ export class TasksController {
   }
 
   @Delete(':id')
-  delete(@Param('id', ParseUUIDPipe) id: string) {
-    return this.tasksService.delete(id);
+  remove(@Param('id', ParseUUIDPipe) id: string) {
+    return this.tasksService.remove(id);
   }
 }

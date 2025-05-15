@@ -3,31 +3,75 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
+import { PaginationDto } from '@/common/dto/pagination.dto';
+import { UsersService } from '@/users/users.service';
+
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
-import { TaskEntity } from './entities/task.entity';
+import { Task } from './entities/task.entity';
 
 @Injectable()
 export class TasksService {
   constructor(
-    @InjectRepository(TaskEntity)
-    private readonly taskRepository: Repository<TaskEntity>,
+    @InjectRepository(Task)
+    private readonly taskRepository: Repository<Task>,
+    private readonly userService: UsersService,
   ) {}
 
   async create(createTaskDto: CreateTaskDto) {
-    const newTask = this.taskRepository.create(createTaskDto);
+    const user = await this.userService.findOne(createTaskDto.userId);
 
-    return this.taskRepository.save(newTask);
+    const newTask = this.taskRepository.create({
+      ...createTaskDto,
+      user,
+    });
+
+    await this.taskRepository.save(newTask);
+
+    return {
+      ...newTask,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+      },
+    };
   }
 
-  async readAll() {
-    const tasks = await this.taskRepository.find();
+  async findAll(paginationDto: PaginationDto) {
+    const { limit = 10, offset = 1 } = paginationDto;
+
+    const tasks = await this.taskRepository.find({
+      relations: ['user'],
+      select: {
+        user: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      },
+      order: {
+        createdAt: 'DESC',
+      },
+      take: limit,
+      skip: (offset - 1) * limit,
+    });
 
     return tasks;
   }
 
-  async readOne(id: string) {
-    const task = await this.taskRepository.findOneBy({ id });
+  async findOne(id: string) {
+    const task = await this.taskRepository.findOne({
+      where: { id },
+      relations: ['user'],
+      select: {
+        user: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      },
+    });
 
     if (!task) {
       throw new NotFoundException('Task not found');
@@ -49,8 +93,8 @@ export class TasksService {
     return this.taskRepository.save(task);
   }
 
-  async delete(id: string) {
-    await this.readOne(id);
+  async remove(id: string) {
+    await this.findOne(id);
 
     await this.taskRepository.delete(id);
 

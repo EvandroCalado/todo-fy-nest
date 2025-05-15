@@ -2,12 +2,16 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
+import { User } from '@/users/entities/user.entity';
+
 @Entity('tasks')
-export class TaskEntity {
+export class Task {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -23,6 +27,10 @@ export class TaskEntity {
   @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   updatedAt: Date;
 
-  // @ManyToOne(() => User, (user) => user.tasks, { onDelete: 'CASCADE' })
-  // user: User;
+  @ManyToOne(() => User, user => user.tasks, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  @JoinColumn({ name: 'userId' })
+  user: User;
 }
