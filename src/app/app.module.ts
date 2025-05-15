@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { TasksModule } from '@/tasks/tasks.module';
+import { UsersModule } from '@/users/users.module';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -19,6 +20,7 @@ import { AppService } from './app.service';
       synchronize: true,
     }),
     TasksModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
