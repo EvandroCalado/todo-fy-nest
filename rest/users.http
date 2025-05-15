@@ -1,0 +1,34 @@
+@baseUrl = http://localhost:3000
+
+### Create
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "name": "Elaynne Cristina",
+  "email": "elaynne@email.com",
+  "password": "123456"
+}
+
+### Find All
+GET {{baseUrl}}/users
+?limit=10
+&offset=0
+
+### Find One
+GET {{baseUrl}}/users/9fda87be-a3d4-4c2a-8a3a-ac058e31a78c
+
+### Update
+PATCH  {{baseUrl}}/users/9fda87be-a3d4-4c2a-8a3a-ac058e31a78c
+Content-Type: application/json
+
+{
+  "name": "Elaynne Cristina",
+  "password": "123456"
+}
+
+### Remove -> Soft Delete
+DELETE   {{baseUrl}}/users/9fda87be-a3d4-4c2a-8a3a-ac058e31a78c
+
+### Restore -> Restore User
+PUT {{baseUrl}}/users/9fda87be-a3d4-4c2a-8a3a-ac058e31a78c

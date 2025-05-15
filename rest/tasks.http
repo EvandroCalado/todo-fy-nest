@@ -5,19 +5,20 @@ POST {{baseUrl}}/tasks
 Content-Type: application/json
 
 {
-  "title": "Nova task"
+  "title": "Nova task",
+  "userId": "76887adf-a97d-47f7-97a5-79ab6b6203de"
 }
 
-### Read All
+### Find All
 GET {{baseUrl}}/tasks
-?limit=10
-&offset=0
+?limit=2
+&offset=1
 
-### Read One
-GET {{baseUrl}}/tasks/63642e6b-a94b-4d8e-a221-7b9283299034
+### Find One
+GET {{baseUrl}}/tasks/60b5aae0-8cff-4929-962b-0c411ff94d91
 
 ### Update
-PATCH  {{baseUrl}}/tasks/5c0e6599-25bb-4db7-acdd-035907f39282
+PATCH  {{baseUrl}}/tasks/ee4e41b9-86c6-4874-ac3a-573262c34914
 Content-Type: application/json
 
 {
@@ -25,5 +26,5 @@ Content-Type: application/json
   "isCompleted": true
 }
 
-### Delete
+### Remove
 DELETE   {{baseUrl}}/tasks/63642e6b-a94b-4d8e-a221-7b9283299034
