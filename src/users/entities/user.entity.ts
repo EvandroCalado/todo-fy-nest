@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import { IsEmail } from 'class-validator';
 import {
   Column,
@@ -24,6 +25,7 @@ export class User {
   email: string;
 
   @Column({ type: 'varchar', length: 255 })
+  @Exclude()
   password: string;
 
   @DeleteDateColumn({ name: 'deleted_at', nullable: true })

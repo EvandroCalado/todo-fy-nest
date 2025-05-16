@@ -8,6 +8,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
+import { HashingContract } from '@/auth/contracts/hashing.contract';
+
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
@@ -15,12 +17,21 @@ import { User } from './entities/user.entity';
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(User) private readonly userRepository: Repository<User>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+    private readonly hashingContract: HashingContract,
   ) {}
 
   async create(createUserDto: CreateUserDto) {
     try {
-      const newUser = this.userRepository.create(createUserDto);
+      const passwordHash = await this.hashingContract.hash(
+        createUserDto.password,
+      );
+
+      const newUser = this.userRepository.create({
+        ...createUserDto,
+        password: passwordHash,
+      });
 
       await this.userRepository.save(newUser);
 
@@ -51,9 +62,21 @@ export class UsersService {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
+    const updateData = {
+      name: updateUserDto.name,
+    };
+
+    if (updateUserDto?.password) {
+      const passwordHash = await this.hashingContract.hash(
+        updateUserDto.password,
+      );
+
+      updateData['password'] = passwordHash;
+    }
+
     const user = await this.userRepository.preload({
       id,
-      ...updateUserDto,
+      ...updateData,
     });
 
     if (!user) {
