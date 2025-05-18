@@ -14,6 +14,7 @@ Content-Type: application/json
 
 ### ========= USERS =========
 
+
 ### Create
 POST {{baseUrl}}/users
 Content-Type: application/json
@@ -55,31 +56,36 @@ Authorization: Bearer {{accessToken}}
 
 ### ========= TASKS =========
 
+
 ### Create
 POST {{baseUrl}}/tasks
 Content-Type: application/json
+Authorization: Bearer {{accessToken}}
 
 {
-  "title": "Nova task",
-  "userId": "76887adf-a97d-47f7-97a5-79ab6b6203de"
+  "title": "Nova task"
 }
 
 ### Find All
 GET {{baseUrl}}/tasks
 ?limit=2
 &offset=1
+Authorization: Bearer {{accessToken}}
 
 ### Find One
-GET {{baseUrl}}/tasks/60b5aae0-8cff-4929-962b-0c411ff94d91
+GET {{baseUrl}}/tasks/0f357ac6-6bc8-4a25-a46f-4588d0c9f139
+Authorization: Bearer {{accessToken}}
 
 ### Update
-PATCH  {{baseUrl}}/tasks/ee4e41b9-86c6-4874-ac3a-573262c34914
+PATCH  {{baseUrl}}/tasks/cb06576f-ba7c-478c-9882-e7b5a29d280f
 Content-Type: application/json
+Authorization: Bearer {{accessToken}}
 
 {
-  "title": "Teste de task editado",
-  "isCompleted": true
+  "title": "Teste de task",
+  "isCompleted": false
 }
 
 ### Remove
-DELETE   {{baseUrl}}/tasks/63642e6b-a94b-4d8e-a221-7b9283299034
+DELETE   {{baseUrl}}/tasks/0f357ac6-6bc8-4a25-a46f-4588d0c9f139
+Authorization: Bearer {{accessToken}}

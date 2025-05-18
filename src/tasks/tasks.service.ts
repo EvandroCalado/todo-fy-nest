@@ -1,8 +1,14 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { plainToClass } from 'class-transformer';
 import { Repository } from 'typeorm';
 
+import { TokenPayloadAuthDto } from '@/auth/dto/token-payload-auth.dto';
 import { PaginationDto } from '@/common/dto/pagination.dto';
 import { UsersService } from '@/users/users.service';
 
@@ -18,8 +24,17 @@ export class TasksService {
     private readonly userService: UsersService,
   ) {}
 
-  async create(createTaskDto: CreateTaskDto) {
-    const user = await this.userService.findOne(createTaskDto.userId);
+  async create(
+    createTaskDto: CreateTaskDto,
+    tokenPayload: TokenPayloadAuthDto,
+  ) {
+    const user = await this.userService.findOne(tokenPayload.sub);
+
+    if (tokenPayload.sub !== user.id) {
+      throw new ForbiddenException(
+        'You are not authorized to create this task',
+      );
+    }
 
     const newTask = this.taskRepository.create({
       ...createTaskDto,
@@ -38,10 +53,14 @@ export class TasksService {
     };
   }
 
-  async findAll(paginationDto: PaginationDto) {
+  async findAll(
+    paginationDto: PaginationDto,
+    tokenPayload: TokenPayloadAuthDto,
+  ) {
     const { limit = 10, offset = 1 } = paginationDto;
 
     const tasks = await this.taskRepository.find({
+      where: { user: { id: tokenPayload.sub } },
       relations: ['user'],
       select: {
         user: {
@@ -60,9 +79,9 @@ export class TasksService {
     return tasks;
   }
 
-  async findOne(id: string) {
+  async findOne(id: string, tokenPayload: TokenPayloadAuthDto) {
     const task = await this.taskRepository.findOne({
-      where: { id },
+      where: { id, user: { id: tokenPayload.sub } },
       relations: ['user'],
       select: {
         user: {
@@ -80,8 +99,13 @@ export class TasksService {
     return task;
   }
 
-  async update(id: string, updateTaskDto: UpdateTaskDto) {
+  async update(
+    id: string,
+    updateTaskDto: UpdateTaskDto,
+    tokenPayload: TokenPayloadAuthDto,
+  ) {
     const task = await this.taskRepository.preload({
+      user: { id: tokenPayload.sub },
       id,
       ...updateTaskDto,
     });
@@ -90,13 +114,15 @@ export class TasksService {
       throw new NotFoundException('Task not found');
     }
 
-    return this.taskRepository.save(task);
+    const updatedTask = await this.taskRepository.save(task);
+
+    return plainToClass(Task, updatedTask);
   }
 
-  async remove(id: string) {
-    await this.findOne(id);
+  async remove(id: string, tokenPayload: TokenPayloadAuthDto) {
+    await this.findOne(id, tokenPayload);
 
-    await this.taskRepository.delete(id);
+    await this.taskRepository.delete({ id, user: { id: tokenPayload.sub } });
 
     return {
       message: 'Task deleted successfully',
