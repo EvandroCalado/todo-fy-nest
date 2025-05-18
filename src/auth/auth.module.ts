@@ -26,6 +26,6 @@ import { HashingContract } from './contracts/hashing.contract';
       useClass: BcryptAdapter,
     },
   ],
-  exports: [HashingContract],
+  exports: [HashingContract, JwtModule, ConfigModule],
 })
 export class AuthModule {}

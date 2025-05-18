@@ -9,13 +9,17 @@ import {
   Patch,
   Post,
   Put,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+
+import { AuthTokenGuard } from '@/auth/guards/auth-token.guard';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
 
+@UseGuards(AuthTokenGuard)
 @Controller('users')
 @UseInterceptors(ClassSerializerInterceptor)
 export class UsersController {
