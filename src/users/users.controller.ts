@@ -13,13 +13,14 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 
+import { TokenPayloadAuthDto } from '@/auth/dto/token-payload-auth.dto';
 import { AuthTokenGuard } from '@/auth/guards/auth-token.guard';
+import { TokenPayloadParam } from '@/auth/params/token-payload.param';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
 
-@UseGuards(AuthTokenGuard)
 @Controller('users')
 @UseInterceptors(ClassSerializerInterceptor)
 export class UsersController {
@@ -31,30 +32,42 @@ export class UsersController {
   }
 
   @Get()
+  @UseGuards(AuthTokenGuard)
   findAll() {
     return this.usersService.findAll();
   }
 
   @Get(':id')
+  @UseGuards(AuthTokenGuard)
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.usersService.findOne(id);
   }
 
   @Patch(':id')
+  @UseGuards(AuthTokenGuard)
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateUserDto: UpdateUserDto,
+    @TokenPayloadParam() tokenPayload: TokenPayloadAuthDto,
   ) {
-    return this.usersService.update(id, updateUserDto);
+    return this.usersService.update(id, updateUserDto, tokenPayload);
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseUUIDPipe) id: string) {
-    return this.usersService.remove(id);
+  @UseGuards(AuthTokenGuard)
+  remove(
+    @Param('id', ParseUUIDPipe) id: string,
+    @TokenPayloadParam() tokenPayload: TokenPayloadAuthDto,
+  ) {
+    return this.usersService.remove(id, tokenPayload);
   }
 
   @Put(':id')
-  restore(@Param('id', ParseUUIDPipe) id: string) {
-    return this.usersService.restore(id);
+  @UseGuards(AuthTokenGuard)
+  restore(
+    @Param('id', ParseUUIDPipe) id: string,
+    @TokenPayloadParam() tokenPayload: TokenPayloadAuthDto,
+  ) {
+    return this.usersService.restore(id, tokenPayload);
   }
 }

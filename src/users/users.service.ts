@@ -1,5 +1,6 @@
 import {
   ConflictException,
+  ForbiddenException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -9,6 +10,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { HashingContract } from '@/auth/contracts/hashing.contract';
+import { TokenPayloadAuthDto } from '@/auth/dto/token-payload-auth.dto';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -61,7 +63,11 @@ export class UsersService {
     return user;
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto) {
+  async update(
+    id: string,
+    updateUserDto: UpdateUserDto,
+    tokenPayload: TokenPayloadAuthDto,
+  ) {
     const updateData = {
       name: updateUserDto.name,
     };
@@ -83,11 +89,23 @@ export class UsersService {
       throw new NotFoundException('User not found');
     }
 
+    if (tokenPayload.sub !== user.id) {
+      throw new ForbiddenException(
+        'You are not authorized to update this user',
+      );
+    }
+
     return this.userRepository.save(user);
   }
 
-  async remove(id: string) {
-    await this.findOne(id);
+  async remove(id: string, tokenPayload: TokenPayloadAuthDto) {
+    const user = await this.findOne(id);
+
+    if (tokenPayload.sub !== user.id) {
+      throw new ForbiddenException(
+        'You are not authorized to delete this user',
+      );
+    }
 
     await this.userRepository.softDelete(id);
 
@@ -96,7 +114,15 @@ export class UsersService {
     };
   }
 
-  async restore(id: string) {
+  async restore(id: string, tokenPayload: TokenPayloadAuthDto) {
+    const user = await this.findOne(id);
+
+    if (tokenPayload.sub !== user.id) {
+      throw new ForbiddenException(
+        'You are not authorized to restore this user',
+      );
+    }
+
     const result = await this.userRepository.restore(id);
 
     if (result.affected === 0) {
