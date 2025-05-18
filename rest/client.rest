@@ -3,7 +3,7 @@
 
 ### Login
 # @name authenticate
-POST {{baseUrl}}/auth
+POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
 {
