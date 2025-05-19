@@ -53,7 +53,13 @@ export class UsersService {
     return users;
   }
 
-  async findOne(id: string) {
+  async findOne(id: string, tokenPayload: TokenPayloadDto) {
+    if (tokenPayload.sub !== id) {
+      throw new ForbiddenException(
+        'You are not authorized to access this user',
+      );
+    }
+
     const user = await this.userRepository.findOneBy({ id });
 
     if (!user) {
@@ -99,7 +105,7 @@ export class UsersService {
   }
 
   async remove(id: string, tokenPayload: TokenPayloadDto) {
-    const user = await this.findOne(id);
+    const user = await this.findOne(id, tokenPayload);
 
     if (tokenPayload.sub !== user.id) {
       throw new ForbiddenException(
@@ -115,7 +121,7 @@ export class UsersService {
   }
 
   async restore(id: string, tokenPayload: TokenPayloadDto) {
-    const user = await this.findOne(id);
+    const user = await this.findOne(id, tokenPayload);
 
     if (tokenPayload.sub !== user.id) {
       throw new ForbiddenException(

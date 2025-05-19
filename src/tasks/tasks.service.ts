@@ -5,7 +5,6 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { plainToClass } from 'class-transformer';
 import { Repository } from 'typeorm';
 
 import { TokenPayloadDto } from '@/auth/dto/token-payload.dto';
@@ -25,7 +24,7 @@ export class TasksService {
   ) {}
 
   async create(createTaskDto: CreateTaskDto, tokenPayload: TokenPayloadDto) {
-    const user = await this.userService.findOne(tokenPayload.sub);
+    const user = await this.userService.findOne(tokenPayload.sub, tokenPayload);
 
     if (tokenPayload.sub !== user.id) {
       throw new ForbiddenException(
@@ -38,16 +37,7 @@ export class TasksService {
       user,
     });
 
-    await this.taskRepository.save(newTask);
-
-    return {
-      ...newTask,
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-      },
-    };
+    return await this.taskRepository.save(newTask);
   }
 
   async findAll(paginationDto: PaginationDto, tokenPayload: TokenPayloadDto) {
@@ -56,13 +46,6 @@ export class TasksService {
     const tasks = await this.taskRepository.find({
       where: { user: { id: tokenPayload.sub } },
       relations: ['user'],
-      select: {
-        user: {
-          id: true,
-          name: true,
-          email: true,
-        },
-      },
       order: {
         createdAt: 'DESC',
       },
@@ -108,9 +91,7 @@ export class TasksService {
       throw new NotFoundException('Task not found');
     }
 
-    const updatedTask = await this.taskRepository.save(task);
-
-    return plainToClass(Task, updatedTask);
+    return await this.taskRepository.save(task);
   }
 
   async remove(id: string, tokenPayload: TokenPayloadDto) {

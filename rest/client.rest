@@ -8,7 +8,7 @@ POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
 {
-  "email": "guest@email.com",
+  "email": "isadora@email.com",
   "password": "123456"
 }
 
@@ -42,21 +42,21 @@ GET {{baseUrl}}/users
 Authorization: Bearer {{accessToken}}
 
 ### Find One
-GET {{baseUrl}}/users/9fda87be-a3d4-4c2a-8a3a-ac058e31a78c
+GET {{baseUrl}}/users/e0c46cfd-1296-4d71-aa51-01a86fe23875
 Authorization: Bearer {{accessToken}}
 
 ### Update
-PATCH  {{baseUrl}}/users/35f98b50-bbe5-400c-8799-e6c697d73d88
+PATCH  {{baseUrl}}/users/e0c46cfd-1296-4d71-aa51-01a86fe23875
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 {
-  "name": "Guest User",
+  "name": "Isadora",
   "password": "123456"
 }
 
 ### Remove -> Soft Delete
-DELETE   {{baseUrl}}/users/76887adf-a97d-47f7-97a5-79ab6b6203de
+DELETE   {{baseUrl}}/users/e0c46cfd-1296-4d71-aa51-01a86fe23875
 Authorization: Bearer {{accessToken}}
 
 ### Restore -> Restore from soft delete
@@ -83,11 +83,11 @@ GET {{baseUrl}}/tasks
 Authorization: Bearer {{accessToken}}
 
 ### Find One
-GET {{baseUrl}}/tasks/0f357ac6-6bc8-4a25-a46f-4588d0c9f139
+GET {{baseUrl}}/tasks/e6962821-741c-45ad-9484-4d4f6e99d445
 Authorization: Bearer {{accessToken}}
 
 ### Update
-PATCH  {{baseUrl}}/tasks/cb06576f-ba7c-478c-9882-e7b5a29d280f
+PATCH  {{baseUrl}}/tasks/e6962821-741c-45ad-9484-4d4f6e99d445
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 

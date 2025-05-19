@@ -10,6 +10,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { RoutePolicies } from '@/auth/enum/route-policies.enum';
 import { Task } from '@/tasks/entities/task.entity';
 
 @Entity('users')
@@ -27,6 +28,9 @@ export class User {
   @Column({ type: 'varchar', length: 255 })
   @Exclude()
   password: string;
+
+  @Column({ type: 'varchar', length: 255, default: 'USER' })
+  role: RoutePolicies;
 
   @DeleteDateColumn({ name: 'deleted_at', nullable: true })
   deletedAt?: Date;
