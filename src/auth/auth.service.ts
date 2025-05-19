@@ -14,7 +14,9 @@ import { User } from '@/users/entities/user.entity';
 
 import { default as authConfig } from './configs/auth.config';
 import { HashingContract } from './contracts/hashing.contract';
-import { LoginAuthDto } from './dto/login-auth.dto';
+import { LoginDto } from './dto/login.dto';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { TokenPayloadDto } from './dto/token-payload.dto';
 
 @Injectable()
 export class AuthService {
@@ -27,9 +29,9 @@ export class AuthService {
     private readonly jwtConfig: ConfigType<typeof authConfig>,
   ) {}
 
-  async login(loginAuthDto: LoginAuthDto) {
+  async login(loginDto: LoginDto) {
     const user = await this.userRepository.findOneBy({
-      email: loginAuthDto.email,
+      email: loginDto.email,
     });
 
     if (!user) {
@@ -37,7 +39,7 @@ export class AuthService {
     }
 
     const isPasswordValid = await this.hashingContract.compare(
-      loginAuthDto.password,
+      loginDto.password,
       user.password,
     );
 
@@ -45,21 +47,66 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const accessToken = await this.jwtService.signAsync(
+    return await this.createTokens(user);
+  }
+
+  async refreshToken(refreshTokenDto: RefreshTokenDto) {
+    try {
+      const { sub } = await this.jwtService.verifyAsync<TokenPayloadDto>(
+        refreshTokenDto.refreshToken,
+        {
+          secret: this.jwtConfig.secret,
+        },
+      );
+
+      const user = await this.userRepository.findOneBy({ id: sub });
+
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+
+      return await this.createTokens(user);
+    } catch (error) {
+      throw new UnauthorizedException(error.message);
+    }
+  }
+
+  private async sighJwt<T>(sub: string, expiresIn: number, payload?: T) {
+    return await this.jwtService.signAsync(
       {
-        sub: user.id,
-        email: user.email,
+        sub,
+        ...payload,
       },
       {
         secret: this.jwtConfig.secret,
-        expiresIn: this.jwtConfig.ttl,
         audience: this.jwtConfig.audience,
         issuer: this.jwtConfig.issuer,
+        expiresIn,
+      },
+    );
+  }
+
+  private async createTokens(user: User) {
+    const accessTokenPromise = this.sighJwt<Partial<User>>(
+      user.id,
+      this.jwtConfig.ttl,
+      {
+        email: user.email,
       },
     );
 
+    const refreshTokenPromise = this.sighJwt(
+      user.id,
+      this.jwtConfig.refreshTokenTtl,
+    );
+    const [accessToken, refreshToken] = await Promise.all([
+      accessTokenPromise,
+      refreshTokenPromise,
+    ]);
+
     return {
       accessToken,
+      refreshToken,
     };
   }
 }
