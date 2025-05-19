@@ -11,7 +11,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
-import { TokenPayloadAuthDto } from '@/auth/dto/token-payload-auth.dto';
+import { TokenPayloadDto } from '@/auth/dto/token-payload.dto';
 import { AuthTokenGuard } from '@/auth/guards/auth-token.guard';
 import { TokenPayloadParam } from '@/auth/params/token-payload.param';
 import { PaginationDto } from '@/common/dto/pagination.dto';
@@ -28,7 +28,7 @@ export class TasksController {
   @Post()
   create(
     @Body() createTaskDto: CreateTaskDto,
-    @TokenPayloadParam() tokenPayload: TokenPayloadAuthDto,
+    @TokenPayloadParam() tokenPayload: TokenPayloadDto,
   ) {
     return this.tasksService.create(createTaskDto, tokenPayload);
   }
@@ -37,7 +37,7 @@ export class TasksController {
   @Get()
   findAll(
     @Query() paginationDto: PaginationDto,
-    @TokenPayloadParam() tokenPayload: TokenPayloadAuthDto,
+    @TokenPayloadParam() tokenPayload: TokenPayloadDto,
   ) {
     return this.tasksService.findAll(paginationDto, tokenPayload);
   }
@@ -46,7 +46,7 @@ export class TasksController {
   @Get(':id')
   findOne(
     @Param('id', ParseUUIDPipe) id: string,
-    @TokenPayloadParam() tokenPayload: TokenPayloadAuthDto,
+    @TokenPayloadParam() tokenPayload: TokenPayloadDto,
   ) {
     return this.tasksService.findOne(id, tokenPayload);
   }
@@ -56,7 +56,7 @@ export class TasksController {
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateTaskDto: UpdateTaskDto,
-    @TokenPayloadParam() tokenPayload: TokenPayloadAuthDto,
+    @TokenPayloadParam() tokenPayload: TokenPayloadDto,
   ) {
     return this.tasksService.update(id, updateTaskDto, tokenPayload);
   }
@@ -65,7 +65,7 @@ export class TasksController {
   @Delete(':id')
   remove(
     @Param('id', ParseUUIDPipe) id: string,
-    @TokenPayloadParam() tokenPayload: TokenPayloadAuthDto,
+    @TokenPayloadParam() tokenPayload: TokenPayloadDto,
   ) {
     return this.tasksService.remove(id, tokenPayload);
   }

@@ -8,7 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { plainToClass } from 'class-transformer';
 import { Repository } from 'typeorm';
 
-import { TokenPayloadAuthDto } from '@/auth/dto/token-payload-auth.dto';
+import { TokenPayloadDto } from '@/auth/dto/token-payload.dto';
 import { PaginationDto } from '@/common/dto/pagination.dto';
 import { UsersService } from '@/users/users.service';
 
@@ -24,10 +24,7 @@ export class TasksService {
     private readonly userService: UsersService,
   ) {}
 
-  async create(
-    createTaskDto: CreateTaskDto,
-    tokenPayload: TokenPayloadAuthDto,
-  ) {
+  async create(createTaskDto: CreateTaskDto, tokenPayload: TokenPayloadDto) {
     const user = await this.userService.findOne(tokenPayload.sub);
 
     if (tokenPayload.sub !== user.id) {
@@ -53,10 +50,7 @@ export class TasksService {
     };
   }
 
-  async findAll(
-    paginationDto: PaginationDto,
-    tokenPayload: TokenPayloadAuthDto,
-  ) {
+  async findAll(paginationDto: PaginationDto, tokenPayload: TokenPayloadDto) {
     const { limit = 10, offset = 1 } = paginationDto;
 
     const tasks = await this.taskRepository.find({
@@ -79,7 +73,7 @@ export class TasksService {
     return tasks;
   }
 
-  async findOne(id: string, tokenPayload: TokenPayloadAuthDto) {
+  async findOne(id: string, tokenPayload: TokenPayloadDto) {
     const task = await this.taskRepository.findOne({
       where: { id, user: { id: tokenPayload.sub } },
       relations: ['user'],
@@ -102,7 +96,7 @@ export class TasksService {
   async update(
     id: string,
     updateTaskDto: UpdateTaskDto,
-    tokenPayload: TokenPayloadAuthDto,
+    tokenPayload: TokenPayloadDto,
   ) {
     const task = await this.taskRepository.preload({
       user: { id: tokenPayload.sub },
@@ -119,7 +113,7 @@ export class TasksService {
     return plainToClass(Task, updatedTask);
   }
 
-  async remove(id: string, tokenPayload: TokenPayloadAuthDto) {
+  async remove(id: string, tokenPayload: TokenPayloadDto) {
     await this.findOne(id, tokenPayload);
 
     await this.taskRepository.delete({ id, user: { id: tokenPayload.sub } });

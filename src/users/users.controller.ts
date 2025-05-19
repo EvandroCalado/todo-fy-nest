@@ -13,7 +13,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 
-import { TokenPayloadAuthDto } from '@/auth/dto/token-payload-auth.dto';
+import { TokenPayloadDto } from '@/auth/dto/token-payload.dto';
 import { AuthTokenGuard } from '@/auth/guards/auth-token.guard';
 import { TokenPayloadParam } from '@/auth/params/token-payload.param';
 
@@ -48,7 +48,7 @@ export class UsersController {
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateUserDto: UpdateUserDto,
-    @TokenPayloadParam() tokenPayload: TokenPayloadAuthDto,
+    @TokenPayloadParam() tokenPayload: TokenPayloadDto,
   ) {
     return this.usersService.update(id, updateUserDto, tokenPayload);
   }
@@ -57,7 +57,7 @@ export class UsersController {
   @UseGuards(AuthTokenGuard)
   remove(
     @Param('id', ParseUUIDPipe) id: string,
-    @TokenPayloadParam() tokenPayload: TokenPayloadAuthDto,
+    @TokenPayloadParam() tokenPayload: TokenPayloadDto,
   ) {
     return this.usersService.remove(id, tokenPayload);
   }
@@ -66,7 +66,7 @@ export class UsersController {
   @UseGuards(AuthTokenGuard)
   restore(
     @Param('id', ParseUUIDPipe) id: string,
-    @TokenPayloadParam() tokenPayload: TokenPayloadAuthDto,
+    @TokenPayloadParam() tokenPayload: TokenPayloadDto,
   ) {
     return this.usersService.restore(id, tokenPayload);
   }

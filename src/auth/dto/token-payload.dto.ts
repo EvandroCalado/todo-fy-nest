@@ -1,4 +1,4 @@
-export class TokenPayloadAuthDto {
+export class TokenPayloadDto {
   sub: string;
   email: string;
   iat: number;

@@ -10,7 +10,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { HashingContract } from '@/auth/contracts/hashing.contract';
-import { TokenPayloadAuthDto } from '@/auth/dto/token-payload-auth.dto';
+import { TokenPayloadDto } from '@/auth/dto/token-payload.dto';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -66,7 +66,7 @@ export class UsersService {
   async update(
     id: string,
     updateUserDto: UpdateUserDto,
-    tokenPayload: TokenPayloadAuthDto,
+    tokenPayload: TokenPayloadDto,
   ) {
     const updateData = {
       name: updateUserDto.name,
@@ -98,7 +98,7 @@ export class UsersService {
     return this.userRepository.save(user);
   }
 
-  async remove(id: string, tokenPayload: TokenPayloadAuthDto) {
+  async remove(id: string, tokenPayload: TokenPayloadDto) {
     const user = await this.findOne(id);
 
     if (tokenPayload.sub !== user.id) {
@@ -114,7 +114,7 @@ export class UsersService {
     };
   }
 
-  async restore(id: string, tokenPayload: TokenPayloadAuthDto) {
+  async restore(id: string, tokenPayload: TokenPayloadDto) {
     const user = await this.findOne(id);
 
     if (tokenPayload.sub !== user.id) {
