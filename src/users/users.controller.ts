@@ -4,14 +4,18 @@ import {
   Controller,
   Delete,
   Get,
+  HttpStatus,
   Param,
+  ParseFilePipeBuilder,
   ParseUUIDPipe,
   Patch,
   Post,
   Put,
+  UploadedFile,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 import { SetRoutePolicy } from '@/auth/decorators/set-route-policy.decorator';
 import { TokenPayloadDto } from '@/auth/dto/token-payload.dto';
@@ -81,5 +85,24 @@ export class UsersController {
     @TokenPayloadParam() tokenPayload: TokenPayloadDto,
   ) {
     return this.usersService.restore(id, tokenPayload);
+  }
+
+  @Post('avatar')
+  @UseGuards(AuthTokenGuard, UserPolicyGuard)
+  @SetRoutePolicy(RoutePolicies.USER)
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadAvatar(
+    @UploadedFile(
+      new ParseFilePipeBuilder()
+        .addMaxSizeValidator({ maxSize: 1024 * 1024 * 2 })
+        .addFileTypeValidator({ fileType: /jpeg|jpg|png|webp/g })
+        .build({
+          errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+        }),
+    )
+    file: Express.Multer.File,
+    @TokenPayloadParam() tokenPayload: TokenPayloadDto,
+  ) {
+    return this.usersService.uploadAvatar(file, tokenPayload);
   }
 }

@@ -63,6 +63,21 @@ Authorization: Bearer {{accessToken}}
 PUT {{baseUrl}}/users/9fda87be-a3d4-4c2a-8a3a-ac058e31a78c
 Authorization: Bearer {{accessToken}}
 
+### Upload Avatar
+POST {{baseUrl}}/users/avatar
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
+Authorization: Bearer {{accessToken}}
+
+------WebKitFormBoundary
+Content-Disposition: form-data; name="file"; filename="avatar.jpg"
+Content-Type: image/jpeg
+
+< ./dev/images/avatar.jpg
+------WebKitFormBoundary--
+
+### Download Avatar
+GET {{baseUrl}}/pictures/e0c46cfd-1296-4d71-aa51-01a86fe23875.jpg
+
 
 ### ========= TASKS =========
 

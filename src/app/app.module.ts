@@ -1,5 +1,7 @@
+import * as path from 'path';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigType } from '@nestjs/config';
+import { ServeStaticModule } from '@nestjs/serve-static';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AuthModule } from '@/auth/auth.module';
@@ -26,6 +28,10 @@ import { AppService } from './app.service';
         autoLoadEntities: database.autoLoadEntities,
         synchronize: database.synchronize,
       }),
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: path.resolve(process.cwd(), 'pictures'),
+      serveRoot: '/pictures',
     }),
     TasksModule,
     UsersModule,

@@ -29,6 +29,9 @@ export class User {
   @Exclude()
   password: string;
 
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  avatar: string;
+
   @Column({ type: 'varchar', length: 255, default: 'USER' })
   role: RoutePolicies;
 

@@ -1,4 +1,7 @@
+import * as fs from 'fs/promises';
+import * as path from 'path';
 import {
+  BadRequestException,
   ConflictException,
   ForbiddenException,
   Injectable,
@@ -138,5 +141,27 @@ export class UsersService {
     return {
       message: 'User restored successfully',
     };
+  }
+
+  async uploadAvatar(file: Express.Multer.File, tokenPayload: TokenPayloadDto) {
+    if (file.size < 1024) {
+      throw new BadRequestException('File size too small or not sended');
+    }
+
+    const user = await this.findOne(tokenPayload.sub, tokenPayload);
+
+    const fileExtension = path
+      .extname(file.originalname)
+      .toLowerCase()
+      .substring(1);
+    const filename = `${tokenPayload.sub}.${fileExtension}`;
+
+    const filePath = path.resolve(process.cwd(), 'pictures', filename);
+
+    await fs.writeFile(filePath, file.buffer);
+
+    user.avatar = filename;
+
+    return this.userRepository.save(user);
   }
 }
