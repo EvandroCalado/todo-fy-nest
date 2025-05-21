@@ -42,7 +42,7 @@ GET {{baseUrl}}/users
 Authorization: Bearer {{accessToken}}
 
 ### Find One
-GET {{baseUrl}}/users/e0c46cfd-1296-4d71-aa51-01a86fe23875
+GET {{baseUrl}}/users/me
 Authorization: Bearer {{accessToken}}
 
 ### Update

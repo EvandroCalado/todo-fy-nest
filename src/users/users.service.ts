@@ -56,14 +56,8 @@ export class UsersService {
     return users;
   }
 
-  async findOne(id: string, tokenPayload: TokenPayloadDto) {
-    if (tokenPayload.sub !== id) {
-      throw new ForbiddenException(
-        'You are not authorized to access this user',
-      );
-    }
-
-    const user = await this.userRepository.findOneBy({ id });
+  async findOne(tokenPayload: TokenPayloadDto) {
+    const user = await this.userRepository.findOneBy({ id: tokenPayload.sub });
 
     if (!user) {
       throw new NotFoundException('User not found');
@@ -108,7 +102,7 @@ export class UsersService {
   }
 
   async remove(id: string, tokenPayload: TokenPayloadDto) {
-    const user = await this.findOne(id, tokenPayload);
+    const user = await this.findOne(tokenPayload);
 
     if (tokenPayload.sub !== user.id) {
       throw new ForbiddenException(
@@ -124,7 +118,7 @@ export class UsersService {
   }
 
   async restore(id: string, tokenPayload: TokenPayloadDto) {
-    const user = await this.findOne(id, tokenPayload);
+    const user = await this.findOne(tokenPayload);
 
     if (tokenPayload.sub !== user.id) {
       throw new ForbiddenException(
@@ -148,7 +142,7 @@ export class UsersService {
       throw new BadRequestException('File size too small or not sended');
     }
 
-    const user = await this.findOne(tokenPayload.sub, tokenPayload);
+    const user = await this.findOne(tokenPayload);
 
     const fileExtension = path
       .extname(file.originalname)

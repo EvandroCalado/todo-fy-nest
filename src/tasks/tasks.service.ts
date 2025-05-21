@@ -24,7 +24,7 @@ export class TasksService {
   ) {}
 
   async create(createTaskDto: CreateTaskDto, tokenPayload: TokenPayloadDto) {
-    const user = await this.userService.findOne(tokenPayload.sub, tokenPayload);
+    const user = await this.userService.findOne(tokenPayload);
 
     if (tokenPayload.sub !== user.id) {
       throw new ForbiddenException(

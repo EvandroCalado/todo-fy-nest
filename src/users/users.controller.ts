@@ -46,14 +46,11 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
-  @Get(':id')
+  @Get('/me')
   @UseGuards(AuthTokenGuard, UserPolicyGuard)
   @SetRoutePolicy(RoutePolicies.USER)
-  findOne(
-    @Param('id', ParseUUIDPipe) id: string,
-    @TokenPayloadParam() tokenPayload: TokenPayloadDto,
-  ) {
-    return this.usersService.findOne(id, tokenPayload);
+  findOne(@TokenPayloadParam() tokenPayload: TokenPayloadDto) {
+    return this.usersService.findOne(tokenPayload);
   }
 
   @Patch(':id')
