@@ -51,57 +51,59 @@ describe('UsersService', () => {
     expect(hashingContract).toBeDefined();
   });
 
-  it('should create a new user', async () => {
-    const createUserDto: CreateUserDto = {
-      name: 'any_name',
-      email: 'any_email@example.com',
-      password: 'any_password',
-    };
-    const passwordHash = 'any_hash';
-    const newUser: User = {
-      id: 'any_id',
-      name: createUserDto.name,
-      email: createUserDto.email,
-      password: passwordHash,
-      avatar: 'any_avatar',
-      role: RoutePolicies.USER,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      deletedAt: undefined,
-      tasks: [],
-    };
+  describe('create', () => {
+    it('should create a new user', async () => {
+      const createUserDto: CreateUserDto = {
+        name: 'any_name',
+        email: 'any_email@example.com',
+        password: 'any_password',
+      };
+      const passwordHash = 'any_hash';
+      const newUser: User = {
+        id: 'any_id',
+        name: createUserDto.name,
+        email: createUserDto.email,
+        password: passwordHash,
+        avatar: 'any_avatar',
+        role: RoutePolicies.USER,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: undefined,
+        tasks: [],
+      };
 
-    jest.spyOn(hashingContract, 'hash').mockResolvedValue(passwordHash);
-    jest.spyOn(userRepository, 'create').mockReturnValue(newUser);
-    jest.spyOn(userRepository, 'save').mockResolvedValue(newUser);
+      jest.spyOn(hashingContract, 'hash').mockResolvedValue(passwordHash);
+      jest.spyOn(userRepository, 'create').mockReturnValue(newUser);
+      jest.spyOn(userRepository, 'save').mockResolvedValue(newUser);
 
-    const result = await userService.create(createUserDto);
+      const result = await userService.create(createUserDto);
 
-    expect(hashingContract.hash).toHaveBeenCalledWith(createUserDto.password);
-    expect(userRepository.create).toHaveBeenCalledWith({
-      ...createUserDto,
-      password: passwordHash,
-    });
-    expect(userRepository.save).toHaveBeenCalledWith(newUser);
-    expect(result).toEqual(newUser);
-  });
-
-  it('should fail to create a new user', async () => {
-    jest.spyOn(userRepository, 'save').mockRejectedValue(new Error());
-
-    await expect(userService.create({} as CreateUserDto)).rejects.toThrow(
-      new Error('Failed to create user'),
-    );
-  });
-
-  it('should throw an error if email already exists', async () => {
-    jest.spyOn(userRepository, 'save').mockRejectedValue({
-      code: '23505',
-      message: 'Email already exists',
+      expect(hashingContract.hash).toHaveBeenCalledWith(createUserDto.password);
+      expect(userRepository.create).toHaveBeenCalledWith({
+        ...createUserDto,
+        password: passwordHash,
+      });
+      expect(userRepository.save).toHaveBeenCalledWith(newUser);
+      expect(result).toEqual(newUser);
     });
 
-    await expect(userService.create({} as CreateUserDto)).rejects.toThrow(
-      ConflictException,
-    );
+    it('should fail to create a new user', async () => {
+      jest.spyOn(userRepository, 'save').mockRejectedValue(new Error());
+
+      await expect(userService.create({} as CreateUserDto)).rejects.toThrow(
+        new Error('Failed to create user'),
+      );
+    });
+
+    it('should throw an error if email already exists', async () => {
+      jest.spyOn(userRepository, 'save').mockRejectedValue({
+        code: '23505',
+        message: 'Email already exists',
+      });
+
+      await expect(userService.create({} as CreateUserDto)).rejects.toThrow(
+        ConflictException,
+      );
+    });
   });
 });
