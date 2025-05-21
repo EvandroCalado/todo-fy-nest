@@ -39,6 +39,13 @@ const createTokenPayloadFactory = (
   ...overrides,
 });
 
+const createUserDtoFactory = (overrides: Partial<CreateUserDto> = {}) => ({
+  name: 'any_name',
+  email: 'any_email@example.com',
+  password: 'any_password',
+  ...overrides,
+});
+
 describe('UsersService', () => {
   let userService: UsersService;
   let userRepository: Repository<User>;
@@ -53,6 +60,7 @@ describe('UsersService', () => {
           useValue: {
             create: jest.fn(),
             save: jest.fn(),
+            find: jest.fn(),
             findOneBy: jest.fn(),
             preload: jest.fn(),
             softDelete: jest.fn(),
@@ -81,11 +89,7 @@ describe('UsersService', () => {
 
   describe('create', () => {
     it('should create a new user', async () => {
-      const createUserDto: CreateUserDto = {
-        name: 'any_name',
-        email: 'any_email@example.com',
-        password: 'any_password',
-      };
+      const createUserDto = createUserDtoFactory();
       const passwordHash = 'any_hash';
       const newUser = createUserFactory();
 
@@ -107,7 +111,7 @@ describe('UsersService', () => {
     it('should fail to create a new user', async () => {
       jest.spyOn(userRepository, 'save').mockRejectedValue(new Error());
 
-      await expect(userService.create({} as CreateUserDto)).rejects.toThrow(
+      await expect(userService.create(createUserDtoFactory())).rejects.toThrow(
         new Error('Failed to create user'),
       );
     });
@@ -121,6 +125,26 @@ describe('UsersService', () => {
       await expect(userService.create({} as CreateUserDto)).rejects.toThrow(
         ConflictException,
       );
+    });
+  });
+
+  describe('findAll', () => {
+    it('should return all users', async () => {
+      const users = [createUserFactory(), createUserFactory()];
+
+      jest.spyOn(userRepository, 'find').mockResolvedValue(users);
+
+      const result = await userService.findAll();
+
+      expect(result).toEqual(users);
+    });
+
+    it('should return empty array if no users found', async () => {
+      jest.spyOn(userRepository, 'find').mockResolvedValue([]);
+
+      const result = await userService.findAll();
+
+      expect(result).toEqual([]);
     });
   });
 
@@ -143,5 +167,9 @@ describe('UsersService', () => {
         new NotFoundException('User not found'),
       );
     });
+  });
+
+  describe('update', () => {
+    it('should update a user by id if user exists', async () => {});
   });
 });
